@@ -244,3 +244,24 @@ h1 {
   letter-spacing: 0.06em;
   cursor: pointer;
 }
+
+.instrument-row {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.instrument-row-visible {
+  animation: slideInLeft 350ms ease-out forwards;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

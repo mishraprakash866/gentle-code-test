@@ -1,16 +1,20 @@
 import React, { useMemo } from "react";
 import Image from "next/image";
 import { Instrument } from "@/types/instruments";
+import { useInView } from "@/helper/useInView";
 
 type ChildProps = {
   instrument: Instrument;
+  index: number;
 };
 
 const formatNumber = (number: number) => {
   return new Intl.NumberFormat("en-IN").format(number);
 };
 
-export const Child = React.memo(({ instrument }: ChildProps) => {
+export const Child = React.memo(({ instrument, index }: ChildProps) => {
+  const { ref, isVisible } = useInView();
+
   const values = useMemo(() => {
     let change = instrument?.price_change_percentage_24h_in_currency ?? 0;
 
@@ -24,8 +28,19 @@ export const Child = React.memo(({ instrument }: ChildProps) => {
     instrument?.price_change_percentage_24h_in_currency,
   ]);
 
+  const animationDelay = useMemo(
+    () => (index < 7 ? `${index * 100}ms` : "0ms"),
+    [],
+  );
+
   return (
-    <div className="row">
+    <div
+      ref={ref}
+      className={`row instrument-row ${
+        isVisible ? "instrument-row-visible" : ""
+      }`}
+      style={{ animationDelay: animationDelay }}
+    >
       <div className="logo">
         <Image
           src={instrument.image}

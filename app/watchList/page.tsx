@@ -4,6 +4,7 @@ import { useDebounce } from "@/helper/debounce";
 import axios from "axios";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Child } from "./child";
+import { Instrument } from "@/types/instruments";
 
 export default function WatchList() {
   const [instruments, setInstruments] = useState([]);
@@ -91,8 +92,8 @@ export default function WatchList() {
         </div>
       ) : (
         <div>
-          {instruments.map((instrument: any) => (
-            <Child instrument={instrument} key={instrument?.id} />
+          {instruments.map((instrument: Instrument, index: number) => (
+            <Child instrument={instrument} index={index} key={instrument?.id} />
           ))}
         </div>
       )}
