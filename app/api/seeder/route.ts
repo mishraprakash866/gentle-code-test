@@ -2,8 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import seeder from "@/lib/seeder.json";
 import { NextRequest } from "next/server";
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export async function GET(req: NextRequest, res: NextApiResponse) {
   try {
+    await delay(600);
+
     const q = req.nextUrl.searchParams.get("q") ?? "";
 
     let data = seeder;

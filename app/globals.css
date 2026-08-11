@@ -158,6 +158,7 @@ h1 {
 }
 .sym {
   font-size: 11px;
+  text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--mut);
 }

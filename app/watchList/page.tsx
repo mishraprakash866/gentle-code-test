@@ -2,8 +2,8 @@
 import BodyLayout from "@/components/layout";
 import { useDebounce } from "@/helper/debounce";
 import axios from "axios";
-import Image from "next/image";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { Child } from "./child";
 
 export default function WatchList() {
   const [instruments, setInstruments] = useState([]);
@@ -11,7 +11,7 @@ export default function WatchList() {
 
   const abortSignal = useRef<AbortController | null>(null);
 
-  const debounce = useDebounce(800);
+  const debounce = useDebounce(300);
 
   useEffect(() => {
     getInstrument();
@@ -92,26 +92,7 @@ export default function WatchList() {
       ) : (
         <div>
           {instruments.map((instrument: any) => (
-            <div key={instrument?.id} className="row">
-              <div className="logo">
-                <Image
-                  src={instrument.image}
-                  alt={instrument.name}
-                  width={40}
-                  height={40}
-                />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div className="nm">{instrument?.name}</div>
-                <div className="sym">{instrument?.symbol}</div>
-              </div>
-              <div>
-                <div className="pr">{instrument?.price}</div>
-                <div className="chg up">▲ {instrument?.change}%</div>
-              </div>
-              <span className="star">☆</span>
-              {/* <span className="star fav">★</span> */}
-            </div>
+            <Child instrument={instrument} key={instrument?.id} />
           ))}
         </div>
       )}
