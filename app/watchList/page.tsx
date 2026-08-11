@@ -2,9 +2,18 @@
 import BodyLayout from "@/components/layout";
 import { useDebounce } from "@/helper/debounce";
 import axios from "axios";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { Child } from "./child";
 import { Instrument } from "@/types/instruments";
+
+const STORAGE_KEY = "watchlist_instruments";
 
 export default function WatchList() {
   const [instruments, setInstruments] = useState([]);
@@ -14,7 +23,22 @@ export default function WatchList() {
 
   const debounce = useDebounce(300);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const cached = sessionStorage.getItem(STORAGE_KEY);
+
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+
+        setInstruments(data);
+        setLoading(false);
+
+        return; // Don't call API
+      } catch {
+        sessionStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
     getInstrument();
   }, []);
 
@@ -33,6 +57,7 @@ export default function WatchList() {
 
       if (response.data.status) {
         setInstruments(response.data.data);
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(response.data.data));
       }
       setLoading(false);
     } catch (error) {

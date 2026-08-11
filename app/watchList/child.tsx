@@ -2,14 +2,12 @@ import React, { useMemo } from "react";
 import Image from "next/image";
 import { Instrument } from "@/types/instruments";
 import { useInView } from "@/helper/useInView";
+import Link from "next/link";
+import { formatNumber } from "@/helper/common";
 
 type ChildProps = {
   instrument: Instrument;
   index: number;
-};
-
-const formatNumber = (number: number) => {
-  return new Intl.NumberFormat("en-IN").format(number);
 };
 
 export const Child = React.memo(({ instrument, index }: ChildProps) => {
@@ -34,35 +32,37 @@ export const Child = React.memo(({ instrument, index }: ChildProps) => {
   );
 
   return (
-    <div
-      ref={ref}
-      className={`row instrument-row ${
-        isVisible ? "instrument-row-visible" : ""
-      }`}
-      style={{ animationDelay: animationDelay }}
-    >
-      <div className="logo">
-        <Image
-          src={instrument.image}
-          alt={instrument.name}
-          width={40}
-          height={40}
-        />
+    <Link href={`/details/${instrument.id}`}>
+      <div
+        ref={ref}
+        className={`row instrument-row ${
+          isVisible ? "instrument-row-visible" : ""
+        }`}
+        style={{ animationDelay: animationDelay }}
+      >
+        <div className="logo">
+          <Image
+            src={instrument.image}
+            alt={instrument.name}
+            width={40}
+            height={40}
+          />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div className="nm">{instrument?.name}</div>
+          <div className="sym">{instrument?.symbol}</div>
+        </div>
+        <div>
+          <div className="pr">{`₹${values?.price}`}</div>
+          {values?.isPositive ? (
+            <div className="chg up">▲ {values?.change}%</div>
+          ) : (
+            <div className="chg dn">▼ {values?.change}%</div>
+          )}
+        </div>
+        <span className="star">☆</span>
+        {/* <span className="star fav">★</span> */}
       </div>
-      <div style={{ flex: 1 }}>
-        <div className="nm">{instrument?.name}</div>
-        <div className="sym">{instrument?.symbol}</div>
-      </div>
-      <div>
-        <div className="pr">{`₹${values?.price}`}</div>
-        {values?.isPositive ? (
-          <div className="chg up">▲ {values?.change}%</div>
-        ) : (
-          <div className="chg dn">▼ {values?.change}%</div>
-        )}
-      </div>
-      <span className="star">☆</span>
-      {/* <span className="star fav">★</span> */}
-    </div>
+    </Link>
   );
 });
