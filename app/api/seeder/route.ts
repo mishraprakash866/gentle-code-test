@@ -1,9 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import seeder from "@/lib/seeder.json";
+import { NextRequest } from "next/server";
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextApiResponse) {
   try {
-    const data = seeder;
+    const q = req.nextUrl.searchParams.get("q") ?? "";
+
+    let data = seeder;
+
+    if (q.trim()) {
+      data = data.filter((ele) =>
+        ele.name?.toLowerCase().startsWith(q.toLowerCase()),
+      );
+    }
 
     return new Response(JSON.stringify({ data, status: true }), {
       status: 200,

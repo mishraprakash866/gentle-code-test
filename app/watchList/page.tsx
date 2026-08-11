@@ -1,33 +1,54 @@
 "use client";
 import BodyLayout from "@/components/layout";
+import { useDebounce } from "@/helper/debounce";
 import axios from "axios";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 export default function WatchList() {
   const [instruments, setInstruments] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const abortSignal = useRef<AbortController | null>(null);
+
+  const debounce = useDebounce(800);
+
   useEffect(() => {
     getInstrument();
   }, []);
 
-  const getInstrument = async () => {
+  const getInstrument = async (name = "") => {
     try {
       setLoading(true);
 
-      const data = await axios("/api/seeder");
+      abortSignal.current = new AbortController();
 
-      console.log(data.data);
+      const response = await axios(
+        "/api/seeder?q=" + encodeURIComponent(name.trim()),
+        {
+          signal: abortSignal.current.signal,
+        },
+      );
 
-      if (data.data.status) {
-        setInstruments(data.data.data);
+      if (response.data.status) {
+        setInstruments(response.data.data);
       }
     } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log("Request cancelled");
+        return;
+      }
+
       console.error("Error fetching instruments:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    const keyword = e.target.value;
+    abortSignal.current?.abort();
+    debounce(() => getInstrument(keyword));
   };
 
   return (
@@ -49,7 +70,11 @@ export default function WatchList() {
         </div>
       </div>
 
-      <input className="search" placeholder="Search assets"></input>
+      <input
+        className="search"
+        onChange={handleSearch}
+        placeholder="Search assets"
+      ></input>
 
       <div className="chips">
         <span className="chip on">All</span>
@@ -70,9 +95,8 @@ export default function WatchList() {
             <div key={instrument?.id} className="row">
               <div className="logo">
                 <Image
-                  loader={() => instrument?.image}
-                  src={instrument?.image}
-                  alt={instrument?.name}
+                  src={instrument.image}
+                  alt={instrument.name}
                   width={40}
                   height={40}
                 />
