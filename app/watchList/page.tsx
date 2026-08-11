@@ -2,7 +2,7 @@
 import BodyLayout from "@/components/layout";
 import { useDebounce } from "@/helper/debounce";
 import axios from "axios";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { Child } from "./child";
 import { Instrument } from "@/types/instruments";
 
@@ -18,7 +18,7 @@ export default function WatchList() {
     getInstrument();
   }, []);
 
-  const getInstrument = async (name = "") => {
+  const getInstrument = useCallback(async (name = "") => {
     try {
       setLoading(true);
 
@@ -34,23 +34,22 @@ export default function WatchList() {
       if (response.data.status) {
         setInstruments(response.data.data);
       }
+      setLoading(false);
     } catch (error) {
       if (axios.isCancel(error)) {
         console.log("Request cancelled");
         return;
       }
-
-      console.error("Error fetching instruments:", error);
-    } finally {
       setLoading(false);
+      console.error("Error fetching instruments:", error);
     }
-  };
+  }, []);
 
-  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     abortSignal.current?.abort();
     debounce(() => getInstrument(keyword));
-  };
+  }, []);
 
   return (
     <BodyLayout>
