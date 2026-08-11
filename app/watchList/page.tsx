@@ -102,14 +102,15 @@ export default function WatchList() {
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <div className="nm">{instrument?.name} 📌</div>
+                <div className="nm">{instrument?.name}</div>
                 <div className="sym">{instrument?.symbol}</div>
               </div>
               <div>
                 <div className="pr">{instrument?.price}</div>
                 <div className="chg up">▲ {instrument?.change}%</div>
               </div>
-              <span className="star fav">★</span>
+              <span className="star">☆</span>
+              {/* <span className="star fav">★</span> */}
             </div>
           ))}
         </div>

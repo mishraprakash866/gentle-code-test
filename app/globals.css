@@ -21,8 +21,11 @@ body {
   background: #151518;
   display: flex;
   justify-content: center;
+  align-items: center;
+  align-content: center;
   padding: 40px;
   gap: 28px;
+  height: 100vh;
   flex-wrap: wrap;
 }
 .phone {
@@ -31,7 +34,7 @@ body {
   border: 1px solid #26262c;
   border-radius: 32px;
   position: relative;
-  height: 600px;
+  height: 85vh;
   padding: 22px 0;
   overflow: hidden;
 }
@@ -45,9 +48,20 @@ body {
 }
 
 .phone-content {
-  overflow-y: scroll;
   max-height: -webkit-fill-available;
   padding: 0 18px;
+  overflow-y: auto;
+
+  /* Firefox */
+  scrollbar-width: none;
+
+  /* IE/old Edge */
+  -ms-overflow-style: none;
+  border-radius: 2.2rem;
+}
+
+.phone-content::-webkit-scrollbar {
+  display: none;
 }
 
 .glow {
